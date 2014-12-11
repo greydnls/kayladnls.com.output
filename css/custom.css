@@ -1,0 +1,14 @@
+.circle
+{
+    border-radius: 50px;
+}
+body
+{
+    background: url(../img/symphony.png);
+}
+
+.menu ul a.contact {
+    width: initial;
+    padding: 5px 10px;
+    font-size: 20px;
+}
