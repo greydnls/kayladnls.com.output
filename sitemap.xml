@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>http://kayladnls.com</loc>
-    <lastmod>2014-12-11</lastmod>
+    <lastmod>2014-12-12</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -33,6 +33,12 @@
     <url>
     <loc>http://kayladnls.com/2014/05/01/not-a-shiny-unicorn</loc>
     <lastmod>2014-05-01T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+    <url>
+    <loc>http://kayladnls.com/2014/12/11/machine-learning</loc>
+    <lastmod>2014-12-11T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
