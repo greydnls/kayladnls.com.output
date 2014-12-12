@@ -7,6 +7,12 @@
     <priority>0.8</priority>
   </url>
     <url>
+    <loc>http://kayladnls.com/2014/12/11/machine-learning</loc>
+    <lastmod>2014-12-11T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+    <url>
     <loc>http://kayladnls.com/2014/12/10/turing-complete-christma-tree</loc>
     <lastmod>2014-12-10T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -33,12 +39,6 @@
     <url>
     <loc>http://kayladnls.com/2014/05/01/not-a-shiny-unicorn</loc>
     <lastmod>2014-05-01T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-    <url>
-    <loc>http://kayladnls.com/2014/12/11/machine-learning</loc>
-    <lastmod>2014-12-11T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
