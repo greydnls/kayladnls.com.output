@@ -3,7 +3,7 @@
     <title><![CDATA[KaylaDnls.com]]></title>
     <link href="http://kayladnls.com/atom.xml" rel="self"/>
     <link href="http://kayladnls.com/"/>
-    <updated>2014-12-15T14:16:04+00:00</updated>
+    <updated>2014-12-15T14:26:38+00:00</updated>
     <id>http://kayladnls.com/</id>
         <generator uri="http://sculpin.io/">Sculpin</generator>
             <entry>
@@ -72,7 +72,7 @@ Also taken from Knuth's video</p>
 
 <p>Each number on the following graph represents the number of possibilities your meander would have to end at that point, given that length (z).</p>
 
-<table>
+<table class="table table-striped">
 <thead>
 <tr>
   <th>z = 0</th>
@@ -191,7 +191,7 @@ Also taken from Knuth's video</p>
   <td>u<sup>2</sup></td>
   <td>u<sup>3</sup></td>
   <td>u<sup>4</sup></td>
-  <td>u<sup>5<sup></td>
+  <td>u<sup>5<sup></sup></sup></td>
   <td>u<sup>6</sup></td>
   <td>u<sup>7</sup></td>
   <td>u <sup>8</sup></td>
