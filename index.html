@@ -98,6 +98,268 @@
             <div class="col-sm-2">
                 <ul class="post-info">
                     <li>
+                        Dec 19, 2014
+                    </li>
+                                        <li class="hidden-xs">
+                        Categories:
+                                                <a class="label labe-default label-pink" href="http://kayladnls.com/blog/categories/Machine%20Learning">Machine Learning</a>
+                                                <a class="label labe-default label-pink" href="http://kayladnls.com/blog/categories/Nerd">Nerd</a>
+                                            </li>
+                                    </ul>
+            </div>
+            <div class="col-sm-10">
+                <a class="post-title" href="http://kayladnls.com/2014/12/19/linear-regression">Method of Least Squares: Using squares to calculate a hat.</a>
+
+                <div class="post-content">
+                    <div class="text-editor">
+                        <p>In my previous <a href="http://kayladnls.com/2014/12/11/machine-learning/">post on Machine Learning</a>, I mentioned supervised and unsupervised methods. We also discussed the two main kinds of supervised methods: continuous and categorical. Today we're going to talk about one of the continuous methods: <strong>Method of Least Squares.</strong> (LSM). LSM is a method of linear regression, which was also briefly mentioned in the previous post.</p>
+
+<blockquote>
+  <p>Linear Regression is the process of finding a line/curve that best fits a set of data.</p>
+</blockquote>
+
+<p>LSM is probably the most popular technique in statistics, and also one of the oldest. How does it work? It operates off the principle that the mean of a distribution is the value that minimizes the sum of squared deviations of the scores. [1]</p>
+
+<p>Now, maybe you're thinking: say what?  Great! Then I'm not the only one.</p>
+
+<p>So what is it really saying? The goal, when doing regression is to try to find a line (or curve) that best fits your training dataset. The idea being that this line will provide a reasonable estimate for future real world data, and that you will be able to make predictions based on that line. Given a value (x) you will be able to estimate the resultant (y) value, also referred to as Y-hat.</p>
+
+<p>With LSM, you draw that line by minimizing the squared distance between each point in your distribution (dataset) and your estimate. Why squares and not just the distance value itself? Squares allow all of the residuals to be treated as a continuous differentiable quantity [2].</p>
+
+<p>The values along the x axis are referrred to as the dependant variable, and the y axis is the independant variable.</p>
+
+<p>You want to create a function that best estimates future y, given an x value. That function can be represented by a line. In slope intercept form:</p>
+
+<p>(1) <img src="http://chart.apis.google.com/chart?cht=tx&amp;chl=%5Chat%7BY%7D%20%3D%20a%20%2BbX" alt="image" /></p>
+
+<p>Where <code>Y</code> is the <strong>predicted value</strong>, <code>m</code> is the <strong>slope</strong> and <code>b</code> is the <strong>y-intercept</strong> of the line,</p>
+
+<p>You want a line that is going to be closest to your data, that is, where the distance between the points and the estimation line is the smallest. The distance between the actual points and your estimation line is the error, and obviously, you want to minimize error, to increase accuracy.</p>
+
+<p>(2) <img src="http://chart.apis.google.com/chart?cht=tx&amp;chl=%5Cvarepsilon%20%3D%20%3D%5Csum_%7Bi%7D%20(Y_%7Bi%7D%20-%20%5Chat%7BY%7D_%7Bi%7D)%5E2%20%3D%20%5Csum_%7Bi%7D%20%5B%20Y_%7Bi%7D%20-%20(a%20%2B%20bX_%7Bi%7D)%5D%5E2" alt="image" /><br />
+Where E represents the error. you're minimizing.</p>
+
+<p>Knowing that a quadratic equation reaches it's minimum when as it's derivatives approaches zero, we'll take the derivative of E with respect to both unknowns, a and b and set each of them to 0. These are called the normal equations.</p>
+
+<p>(3) <img src="http://chart.apis.google.com/chart?cht=tx&amp;chl=%5Cpartial%20%20%5Cvarepsilon%20%2F%20%5Cpartial%20a%20%3D%202Na%20%2B%202b%20%5Csum%20X_%7Bi%7D%20-%202%5Csum%20Y_%7Bi%7D%20%3D%200" alt="image" /></p>
+
+<p>and</p>
+
+<p>(4) <img src="http://chart.apis.google.com/chart?cht=tx&amp;chl=%5Cpartial%20%20%5Cvarepsilon%20%2F%20%5Cpartial%20b%20%3D%202b%20%5Csum%20X%5E2_%7Bi%7D%20%2B%202a%20%5Csum%20X_%7Bi%7D%20-%202%20%5Csum%20Y_%7Bi%7DX%7Bi%7D%20%3D%200" alt="image" /></p>
+
+<p>Solve those normal equations and you will end up with:</p>
+
+<p>(5) <img src="http://chart.apis.google.com/chart?cht=tx&amp;chl=a%20%3D%20M_%7By%7D%20-%20bM_%7Bx%7D" alt="image" /><br />
+Where My and Mx are the mean of x and y, respectively.</p>
+
+<p>and</p>
+
+<p>(6) <img src="http://chart.apis.google.com/chart?cht=tx&amp;chl=b%20%3D%20%5Csum%20(Y_%7Bi%7D-M_%7By%7D)(X_%7Bi%7D-M_%7Bx%7D)%2F%20%5Csum%20(X_%7Bi%7D%20-%20M_%7Bx%7D)%5E2" alt="image" /></p>
+
+<p>Now, all of that is a rather math-y representation of the problem, with greek letters a-plenty. It's hard to read, and a bit hard to understand, in my opinion. I much prefer to look at it in code.</p>
+
+<h3>Show me the codez</h3>
+
+<ol>
+<li>Calculate the mean (average) of x and y. (bar-x and bar-y, respectively. These values were M<sub>y</sub> and M<sub>x</sub> in the equations above)   </li>
+<li>Take the distance from each observation in your training data, to the bar-x and the bar-y.  </li>
+<li>Find the slope <code>m</code>.   </li>
+<li>Use the point where bar-x and bar-y intersect (<strong>mean-intersect</strong>), along with the slope to calculate the y-intercept of your line.   </li>
+<li>Tada! You have a function. Punch in x values and out pop estimated y values ( Y-Hat).    </li>
+</ol>
+
+<p>I want to show you what that looks like in code. I've included the table below as a reference, so you can see all of the values that I will be using for this example, as well as bar-x and bar-y.</p>
+
+<table class="table table-bordered table-striped">
+<thead>
+<tr>
+  <th>X</th>
+  <th>Y</th>
+  <th>x - bar-x</th>
+  <th>y - bar-y</th>
+  <th>(x-bar-x)<sup>2</sup></th>
+  <th>(x-bar-x)(y-bar-y)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>2</td>
+  <td>-2</td>
+  <td>-2</td>
+  <td>4</td>
+  <td>4</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>4</td>
+  <td>-1</td>
+  <td>0</td>
+  <td>1</td>
+  <td>0</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>5</td>
+  <td>0</td>
+  <td>1</td>
+  <td>0</td>
+  <td>0</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>4</td>
+  <td>1</td>
+  <td>0</td>
+  <td>1</td>
+  <td>0</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>5</td>
+  <td>2</td>
+  <td>1</td>
+  <td>4</td>
+  <td>2</td>
+</tr>
+</tbody>
+</table>
+
+<p>Step 1: Calculate bar-x and bar-y:</p>
+
+<pre><code> $mean_x = $this-&gt;mean($x);
+ $mean_y = $this-&gt;mean($y);
+
+ function mean(array $vals) {
+        return array_sum($vals) / count($vals);
+}
+</code></pre>
+
+<p>Step 2: Calculate the distance between each point and bar-x and bar-y
+Here we're constructing two arrays that will hold the distance to bar-x and bar-y, for each value of x and y. Keep in mind that each x and y correspond to the x and y coordinates of points on a graph.</p>
+
+<pre><code>$x_minus_barx = array_map(function($x) use($mean_x) {
+                return $x - $mean_x;
+            }, $x);
+
+$y_minus_bary = array_map(function($y) use($mean_y) {
+                return $y - $mean_y;
+            }, $y);
+</code></pre>
+
+<p>Step 3: Find the slope:
+To calculate the slope, you sum the square of $x_minus_barx, this becomes your denimonator. You then sum the values of $x_minus_barx and $y_minus_bary, this becomes your numerator. This fraction becomes your slope.</p>
+
+<p>This corresponds directly to equation (6) above.</p>
+
+<pre><code>$slope = $this-&gt;calcSlope($x_minus_barx, $y_minus_bary);
+
+function calcSlope($x_minus_barx, $bary)
+{
+    $barxsq = $this-&gt;squareArr($x_minus_barx);
+
+    $barx_times_bary = $this-&gt;multArrs($x_minus_barx, $y_minus_bary);
+
+    return array_sum($barx_times_bary) / array_sum($barxsq);
+}
+</code></pre>
+
+<p>Step 4: Use the mean-intercept and the slope to calculate the Y Intercept. 
+The mean intercept is the point where bar-x and bar-y meet. All regression lines must pass through this point. Since we know that point is on our line, we can you it's X and Y values to calculate the Y-intercept of the line. You do this by rearranging the <code>Y = mX+b</code> function into : <code>b = Y - Mx</code>.</p>
+
+<p>This corresponds directly to equation (5) above.</p>
+
+<pre><code>$y_int = $this-&gt;calcYInt($this-&gt;slope, $mean_intercept);
+function calcYInt($slope, $mean_intercept)
+{
+    return $mean_intercept[1] - ($slope * $mean_intercept[0]);
+}
+</code></pre>
+
+<p>Step 5: Tada;
+At this point, we know the values for our Y-intercept <code>b</code>, and our slope: <code>m</code>. Given any value for X, we can calculate Y.</p>
+
+<pre><code>function estimate($x)
+{
+    return $this-&gt;y_int + ($this-&gt;slope * $x);
+}
+</code></pre>
+
+<p>Given the input points <code>{1, 2}, {2, 4}, {3, 5}, {4, 4}, {5, 5}</code>, we find that the slope = .6 and the y-intercept is 2.2.</p>
+
+<p>Graphically this looks like this:<br />
+<img src="/img/lms.png" alt="image" /></p>
+
+<p>Each point on the graph represents a datapoint, and the line represents our estimation line. You can see that the line intercepts the y-axis just where we said it would (2.2).</p>
+
+<h3>What does this all mean?</h3>
+
+<p><img src="http://managedaccount.blog.com/files/2012/10/double-rainbow-what-does-this-mean-women-s-t-shirts_design.png" alt="image" /></p>
+
+<p>Let me take a moment to illustrate with an arbitrary example. You have a house you want to sell, you also have the sales data for houses in your town, along with their square footage. Train your function on this dataset, such that square footage vales are along the x-axis and price is along the y-axis. Input the square footage of your soon to be sold home and out comes a reasonable estimate of what your home would sell for.</p>
+
+<p><strong>A little further reading</strong><br />
+<a href="https://twitter.com/ianbarber">Ian Barber</a> did a <a href="http://phpir.com/linear-regression-in-php/">post covering Linear Regression</a> that uses a different alogirthm. I wanted to verify my results against his.  If you punch in his input data:</p>
+
+<pre><code>// data x, y
+$data = array(
+    array(5, 21),
+    array(6, 25),
+    array(7, 30),
+    array(8, 31),
+    array(10, 41),
+    array(12, 50)
+);
+</code></pre>
+
+<p>You can verify that the method I've outlined here results in <code>y = 0.29 + 4.08x</code>, which is consistent with the results that he got. The post he wrote is a very good one, and I highly suggest reading it.</p>
+
+<p>There are many other flavors of Least Squares that I will cover in later posts. This method can be extended to non-linear functions, and also to apply to more than one variable, but that will have to wait for another day.</p>
+
+<p>Hopefully you've learned a lot, and as always, feel free to ask questions if anything is unclear.</p>
+
+<blockquote>
+  <p>References<br />
+  1. Abdi, Herve, The Method of Least Squares <a href="http://www.utd.edu/~herve/Abdi-LeastSquares06-pretty.pdf">http://www.utd.edu/~herve/Abdi-LeastSquares06-pretty.pdf </a><br />
+  2. Least Squares Fitting, Wolfram Math World, <a href="http://mathworld.wolfram.com/LeastSquaresFitting.html">http://mathworld.wolfram.com/LeastSquaresFitting.html</a></p>
+</blockquote>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+    <article class="post">
+        <div class="row">
+            <div class="col-sm-2">
+                <ul class="post-info">
+                    <li>
+                        Dec 19, 2014
+                    </li>
+                                        <li class="hidden-xs">
+                        Categories:
+                                                <a class="label labe-default label-pink" href="http://kayladnls.com/blog/categories/Machine%20Learning">Machine Learning</a>
+                                                <a class="label labe-default label-pink" href="http://kayladnls.com/blog/categories/Nerd">Nerd</a>
+                                                <a class="label labe-default label-pink" href="http://kayladnls.com/blog/categories/Trees">Trees</a>
+                                            </li>
+                                    </ul>
+            </div>
+            <div class="col-sm-10">
+                <a class="post-title" href="http://kayladnls.com/2014/12/19/binary-trees">Binary and AVL and black-red oh my!</a>
+
+                <div class="post-content">
+                    <div class="text-editor">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+    <article class="post">
+        <div class="row">
+            <div class="col-sm-2">
+                <ul class="post-info">
+                    <li>
                         Dec 13, 2014
                     </li>
                                         <li class="hidden-xs">
@@ -431,255 +693,6 @@ The row second from the left corresponds to the sequence of numbers for <strong>
   [2] Basic Analytic combinators of directed lattice paths, Bandierier, Cyril &amp; Flajolet, Phillippe<br />
   [3] Eugène Charles Catalan, <a href="http://en.wikipedia.org/wiki/Eug%C3%A8ne_Charles_Catalan">http://en.wikipedia.org/wiki/Eug%C3%A8ne_Charles_Catalan</a></p>
 </blockquote>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </article>
-    <article class="post">
-        <div class="row">
-            <div class="col-sm-2">
-                <ul class="post-info">
-                    <li>
-                        Dec 11, 2014
-                    </li>
-                                        <li class="hidden-xs">
-                        Categories:
-                                                <a class="label labe-default label-pink" href="http://kayladnls.com/blog/categories/Machine%20Learning">Machine Learning</a>
-                                                <a class="label labe-default label-pink" href="http://kayladnls.com/blog/categories/Nerd">Nerd</a>
-                                            </li>
-                                    </ul>
-            </div>
-            <div class="col-sm-10">
-                <a class="post-title" href="http://kayladnls.com/2014/12/11/machine-learning">Intro to Machine Learning: Math and Magic and Power.</a>
-
-                <div class="post-content">
-                    <div class="text-editor">
-                        <p>Welcome to the first post in a new Machine Learning Series I'll be writing. We'll start from the top, covering what machine learning is at the most basic level. Each post will cover another topic, giving a more in depth view of key concepts and ideas.</p>
-
-<h4>Machine Learning: What even is it?</h4>
-
-<p>Machine learning. What do you think of when you hear that? If you're like most people (or at least like me) you think of SkyNet. Sentient computers that take over the world and enslave all of mankind.</p>
-
-<p>Really, though, what Machine learning really is: MATH. Math, and magic and a whole lot of power. If you're already having horribly flashbacks to Calculus class, don't run away screaming just yet. Focus more on the "magic" and "power" parts. The math will come, I promise.</p>
-
-<p>If you spend any time on the internet at all, you probably come into contact with dozens of services a day that use some form of machine learning. Do you use Gmail or a similar service that automatically detects "spam" for you and filters it out of your inbox? Are you on twitter right now, staring at a list of "Suggested" accounts for you to follow?</p>
-
-<p>Both of those are examples of Machine Learning in action.</p>
-
-<p>**Textbook Definition: **</p>
-
-<blockquote>
-  <p>Machine learning is a scientific discipline that explores the construction and study of algorithms that can learn from data.[1]</p>
-</blockquote>
-
-<p>Machine learning is about understanding data, and drawing conclusions from that data. There is a vast array of tools (algorithms) available to us to help us do that. The magic of these algorithms? They do all the work.</p>
-
-<p>These algorithms are given a <strong>training dataset</strong> to learn from. Their accuracy is then run against a <strong>test dataset</strong> to confirm that they are performing well. Once that is done, you can feel relatively safe running the algorithm against real world data.</p>
-
-<p>Think of both the training and test datasets as "past experiences". You're giving your algorithm a set of past experiences and telling it to learn from it. You can then hand it a "new experience", and based on what it has learned, it will predict the outcome for you.</p>
-
-<h4>What can you do with it?</h4>
-
-<p>There are two main types of Machine Learning (also called Statistical Learning): <strong>Supervised</strong> and <strong>Unsupervised</strong>.  I'll explain both breifly, and we'll go into more depth in future posts in this series.</p>
-
-<h5>Supervised</h5>
-
-<p>Supervised statistical learning methods build a statistical model for predicting or estimating output based on input(s). Within the field of supervised learning, there are two more clasifications: Those algorithms that give continuous,  quantitative output and those that give non-numeric or categorical (qualitative) output.</p>
-
-<p>A common form of quantitative supervised learning is called <strong>Regression</strong>. 
-**Example: **We have a dataset of <code>WageData</code> that includes information about the age, education, wage and calendar year of men in a specific area of the country. We can use a regression algorithm to create a model such that, given another man's information, we can accurately predict his wages.</p>
-
-<p>A common form of qualitative supervised is <strong>Classification</strong>.<br />
-<strong>Example:</strong> By examining stock market data containing daily movements in the S&amp;P 500 over a 5 year period, we are able to predict whether tomorrow's index will <em>increase</em> or <em>decrease</em>.  (PS: This is very hard to do, so don't get your hopes up that this series will teach you to become a Wall Street bajillionaire.)</p>
-
-<h5>Unsupervised</h5>
-
-<p>Unsupervised methods have input, but no output. Instead, we're trying to learn about the structure of the data, and relationships within that data. In this case, we're not trying to predict or estimate, but observe.</p>
-
-<p>A common type of Unsupervised learning is called <strong>Clustering</strong>. 
-<strong>Example</strong> Given market demographics for customers of our company (age, Annual house hold income, etc) we can analyze the data and find "groupings" or "clusters" within the data. Further analysis of those clusters can help us understand how each group is related to the other.</p>
-
-<p>So, there you have it. A quick, preliminary rundown of what Machine Learning is. More to come!</p>
-
-<blockquote>
-  <p>References<br />
-  1. Glossary of Terms <a href="http://ai.stanford.edu/~ronnyk/glossary.html">http://ai.stanford.edu/~ronnyk/glossary.html</a></p>
-</blockquote>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </article>
-    <article class="post">
-        <div class="row">
-            <div class="col-sm-2">
-                <ul class="post-info">
-                    <li>
-                        Dec 10, 2014
-                    </li>
-                                        <li class="hidden-xs">
-                        Categories:
-                                                <a class="label labe-default label-pink" href="http://kayladnls.com/blog/categories/Code">Code</a>
-                                                <a class="label labe-default label-pink" href="http://kayladnls.com/blog/categories/Nerd">Nerd</a>
-                                            </li>
-                                    </ul>
-            </div>
-            <div class="col-sm-10">
-                <a class="post-title" href="http://kayladnls.com/2014/12/10/turing-complete-christma-tree">Undecidable Turing-Complete Christmas Tree Automata in Practice</a>
-
-                <div class="post-content">
-                    <div class="text-editor">
-                        <h4>"Have you ever heard of Rule 30?"</h4>
-
-<p>A friend chirped me in skype asking if I was familiar with "Rule 30". He's going in for a job interview and they'd asked him to code this Rule 30 as an exercise. I hadn't heard of it, but I was intruiged, and I'm always one to try to help a friend. Off to the Google-Mobile, Batman!</p>
-
-<p>As I would learn, <code>Rule 30</code> refers to something introduced by  <a href="http://en.wikipedia.org/wiki/Stephen_Wolfram">Stephen Wolfram</a> in 1983]<sup> (1)</sup>.  Even if you're not familiar with Wolfram, you're probably familiar with his work. Especially, if you took any <a href="http://www.wolframalpha.com/">college level Calculus classes</a>. He was a computer scientist, and word is he was pretty good at the maths. If you don't know him, check him out, cool dude.</p>
-
-<p>Anyway, on to this Rule 30 business. Rule 30 is one of many rules that pertains to binary cellular automaton<sup> (2)</sup>. Now, when I read that the first time, they lost me halfway through binary. If you're like me, never fear!</p>
-
-<h4>Elementary Celluar Automaton</h4>
-
-<p>So, how's this work? For each cell there are two possible values: 1 or 0. Each of Wolfram's "Rules" (there are 255 of them) defines a list of rules that tell you how to determine whether a given cell is 1 or 0. It does this by analyzing the "neghborhood" of the cell in question. What is meant by neighborhood is discussed in more detail below.</p>
-
-<h4>What it means to be 1D</h4>
-
-<p>You may be famliar with other Cellular Automata, such as Conway's game of life Game of Life<sup>(3)</sup>. This method is similar, but there is a primary difference. Game of Life is 2-dimensional, with a third dimension of time. That means that as the rules are applied and the pattern progresses, the "board" is refreshed.</p>
-
-<p>Rule 30 and it's siblings are 1-Dimensional. In this case, the y axis is, in fact, time. That means that as the program is run the new output is appended to the old, rather than the entire "board" refreshing.</p>
-
-<h4>Why "Rule 30"?</h4>
-
-<p>Since there are<code>2×2×2 = 8</code> possible binary states for the three cells neighboring a given cell, there are a total of <code>2^8=256</code> elementary cellular automata, each of which can be indexed with an 8-bit binary number.</p>
-
-<p>So, Binary: 00011110 = decimal 30. Therefore, Rule 30. This holds true for all of the other rules, too, by the way. Not terribly important, but I found it interesting, so there you have it. Moving on.</p>
-
-<h4>Ruleception</h4>
-
-<p>Yes! Rules inside rules!</p>
-
-<p><img src="/img/rule30.gif" alt="image" /></p>
-
-<p>Above are the rules given for Rule 30. This is how you determine whether your "cell" is a 1 or a 0. Upon first inspection, this made absolutely 0 sense to me. (binary pun possibly intended?).</p>
-
-<p>What you need to understand here is what is meant by "neighborhood". When you're determining the 1/0ness of a cell, you look at it's neighborhood and compare that against the rules. Neighborhood being the three cells above it. So, 111 = 0, 110 = 0, so forth and so on. Once you get your mind around that, you're off to the races.</p>
-
-<p>Once you have your rules, you apply them to the given input (in this case a single "line" of the grid with at least one cell set to "1"). What do you get?</p>
-
-<p><img src="/img/rule30graph.png" alt="image" /></p>
-
-<p>So Pretty.</p>
-
-<p>But how do you DO it? Well, let me show you.</p>
-
-<h4>The Codez.</h4>
-
-<p>*** Warning!** I have absolutely no intention of using OO practices here. No classes will be made, no injection will be used. I will interface nothing. If this makes you uncomfortable, you may want to stop reading.*</p>
-
-<p>End result, I want to create this cool looking graph thing. That's how a picture it, a graph, or grid, Once you're there, it becomes a matter of some setup, and then some iteration. It looks like this:</p>
-
-<pre><code>//First thing's first, let's codify those rules. 
-$rules = array(
-    '111'=&gt; 0,
-    '110' =&gt; 0,
-    '101'=&gt; 0,
-    '100' =&gt; 1,
-    '011'=&gt; 1,
-    '010' =&gt; 1,
-    '001'=&gt; 1,
-    '000' =&gt; 0
-);
-
-//create an empty array to hold your grid
-$lines = array();
-
-//set up that first line 
-$first_line = array_fill(0, 51, 0);
-
-// make sure you set at least one of those cells to 1,
-// or this will going no where fase. 
-$first_line[24] = 1;
-
-//now add your line to the grid. 
-$lines[] = $first_line;
-
-//Lets compile that grid
-
-// I'm doing 10 iterations, you can do as many as you like. 
-for ($i = 0; $i&lt; 10; $i++)
-{
-    // make a new line
-    $line = array();
-
-    for($j = 0; $j&lt; 51; $j++)
-    {
-        // The "pattern" is determined by the "neighborhood" or the 3 cells in the 
-        // generation (row) above our cell in question. 
-        $pattern = (string)implode('', array_slice(end($lines), $j - 1, 3));
-
-         // if we have a valid value, great. Elsewise, give is a 0. 
-         $line[] = (strlen($pattern) == 3 &amp;&amp; isset($rules[$pattern])) ? $rules[$pattern] : 0;
-    }
-
-    Add the new line into the grid
-    $lines[] = $line;
-}
-
-// Now, let's output it
-foreach ($lines as $line)
-{
-    foreach ($line as $piece)
-    {
-        echo $piece;
-    }
-    echo "\n";
-}
-</code></pre>
-
-<p><img src="/img/rule30output.png" alt="image" /></p>
-
-<p>Tada!</p>
-
-<h4>Merry Christmas!</h4>
-
-<p>For mine, I changed 1 to <code>'/'</code> and 0 to <code>'*'</code>. Why? Because it's December, and it looks festive, that's why. I just taught you how to output a Christmas tree in your terminal!</p>
-
-<p>Clearly, with the added nerdery, this is no longer a Christmas Tree. This is what we call a FSM Tree. The perfect DIY gift for your budget conscious nerd.</p>
-
-<p><img src="http://media.giphy.com/media/14cUTtBgAXn7J6/giphy.gif" alt="image" /></p>
-
-<p>And there you have it. Merry Christmas, Nerds.</p>
-
-<h4>Post Script</h4>
-
-<p>You may be wondering why the post title references Turing completeness<sup>(4)</sup>. As I mentioned before, our beloved Rule 30 has 254 siblings. One of these siblings is known as Rule 110, and this rule is turing complete.</p>
-
-<p>The process for running through Rule 110 is the same as Rule 30 (that holds true for all 255 rules, by the by), the only change is the rules. So, if you're interested, here are the rules for Rule 110 (in Christmas tree format, of course)</p>
-
-<pre><code>$rules = array(
-    '///'=&gt; '*',
-    '//*' =&gt; '/',
-    '/*/'=&gt; '/',
-    '/**' =&gt;'*',
-    '*//'=&gt; '/',
-    '*/*' =&gt; '/',
-    '**/'=&gt; '/',
-    '***' =&gt; '*'
-);
-</code></pre>
-
-<p>Go forth and make a Turing machine.</p>
-
-<p>References</p>
-
-<ol>
-<li>Wolfram, S., "Statistical mechanics of cellular automata", <a href="http://journals.aps.org/rmp/abstract/10.1103/RevModPhys.55.601">http://journals.aps.org/rmp/abstract/10.1103/RevModPhys.55.601</a> </li>
-<li>Elementary Cellular Automaton, <a href="http://mathworld.wolfram.com/ElementaryCellularAutomaton.htm">http://mathworld.wolfram.com/ElementaryCellularAutomaton.htm</a></li>
-<li>Conway's game of life, <a href="http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life</a></li>
-<li>Turing Complete, <a href="http://c2.com/cgi/wiki?TuringComplete">http://c2.com/cgi/wiki?TuringComplete</a></li>
-</ol>
 
                     </div>
                 </div>
