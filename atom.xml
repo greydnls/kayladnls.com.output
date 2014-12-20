@@ -3,14 +3,14 @@
     <title><![CDATA[KaylaDnls.com]]></title>
     <link href="http://kayladnls.com/atom.xml" rel="self"/>
     <link href="http://kayladnls.com/"/>
-    <updated>2014-12-20T20:50:06+00:00</updated>
+    <updated>2014-12-20T20:54:18+00:00</updated>
     <id>http://kayladnls.com/</id>
         <generator uri="http://sculpin.io/">Sculpin</generator>
             <entry>
             <title type="html"><![CDATA[Method of Least Squares: Using squares to calculate a hat.]]></title>
-            <link href="http://kayladnls.com/2014/12/19/linear-regression"/>
+            <link href="http://kayladnls.com/2014/12/19/least-squares"/>
             <updated>2014-12-19T00:00:00+00:00</updated>
-            <id>http://kayladnls.com/2014/12/19/linear-regression</id>
+            <id>http://kayladnls.com/2014/12/19/least-squares</id>
             <content type="html"><![CDATA[<p>In my previous <a href="http://kayladnls.com/2014/12/11/machine-learning/">post on Machine Learning</a>, I mentioned supervised and unsupervised methods. We also discussed the two main kinds of supervised methods: continuous and categorical. Today we're going to talk about one of the continuous methods: <strong>Method of Least Squares.</strong> (LSM). LSM is a method of linear regression, which was also briefly mentioned in the previous post.</p>
 
 <blockquote>
