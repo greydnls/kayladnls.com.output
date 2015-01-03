@@ -3,9 +3,217 @@
     <title><![CDATA[KaylaDnls.com]]></title>
     <link href="http://kayladnls.com/atom.xml" rel="self"/>
     <link href="http://kayladnls.com/"/>
-    <updated>2014-12-20T20:54:18+00:00</updated>
+    <updated>2015-01-03T06:17:37+00:00</updated>
     <id>http://kayladnls.com/</id>
         <generator uri="http://sculpin.io/">Sculpin</generator>
+            <entry>
+            <title type="html"><![CDATA[The Product of Permutations in Cycle Notation and Other Words That Don&#039;t Make Sense.]]></title>
+            <link href="http://kayladnls.com/2015/01/02/product-of-permutations"/>
+            <updated>2015-01-02T00:00:00+00:00</updated>
+            <id>http://kayladnls.com/2015/01/02/product-of-permutations</id>
+            <content type="html"><![CDATA[<h4>Permutations.</h4>
+
+<p>What is a permutation you ask?</p>
+
+<p>According to Mathworld [1]:</p>
+
+<blockquote>
+  <p>A permutation, also called an "arrangement number" or "order," is a rearrangement of the elements of an ordered list S into a one-to-one correspondence with S itself. The number of permutations on a set of n elements is given by n!</p>
+</blockquote>
+
+<p>Great, now in english please? It's essentially a rearrangement of a set of things.</p>
+
+<p>So, you have a set <code>S</code> = <code>{a, b, c}</code> a permutation of that could be one of 6 different options (which is, 3 factorial or 3!) : 
+ <code>abc</code>, <code>acb</code>, <code>bac</code>, <code>bca</code>, <code>cab</code>, <code>cba</code></p>
+
+<p>When you think of permutations from the point of "rearrangment" or "renaming" of these objects, it makes sense to show the transition from before, to after. This is often done in two-line notation which looks something like this:</p>
+
+<p><img src="http://latex.codecogs.com/gif.latex?\binom{a&space;b&space;c&space;d&space;e&space;f}{c&space;d&space;f&space;b&space;e&space;a}" alt="image" /></p>
+
+<p>The top line here is the "before", and the bottom line is the "after".  So you would read this as "a becomes c, b becomes d, c becomes f" etc.</p>
+
+<p>You can also apply permutations one after the other. This is actually called "multiplying permutations". Personally, I think that's rather odd, as I don't see any actual multiplication going on, but I'll defer to brains bigger than my own and just go with it. You can feel free to do the same. Moving on.</p>
+
+<p>If you have:</p>
+
+<p><img src="http://latex.codecogs.com/gif.latex?\binom{a&space;b&space;c&space;d&space;e&space;f}{c&space;d&space;f&space;b&space;e&space;a}&space;X&space;\binom{a&space;b&space;c&space;d&space;e&space;f}{c&space;a&space;e&space;d&space;f&space;b}" alt="image" /></p>
+
+<p>You apply the first permutation, and then the second.</p>
+
+<p>You end up with this:<br />
+<img src="http://latex.codecogs.com/gif.latex?\binom{a&space;b&space;c&space;d&space;e&space;f}{c&space;d&space;f&space;b&space;e&space;a}&space;X&space;\binom{a&space;b&space;c&space;d&space;e&space;f}{c&space;a&space;e&space;d&space;f&space;b}&space;=&space;\binom{a&space;b&space;c&space;d&space;e&space;f}{c&space;d&space;f&space;b&space;e&space;a}&space;X&space;\binom{c&space;d&space;f&space;b&space;e&space;a}{c&space;a&space;e&space;d&space;f&space;b}&space;=&space;\binom{a&space;b&space;c&space;d&space;e&space;f}{c&space;a&space;e&space;d&space;f&space;b}" alt="image" /></p>
+
+<p>If that's still a bit fuzzy, let me explain it in a different way.<br />
+Step 1: we start with  <code>a b c d e f</code><br />
+Step 2: That becomes <code>c d f b e a</code><br />
+Step 3: Step 2 becomes <code>c a e d f b</code></p>
+
+<p>So the final result of that multiplication can be read as <code>a b c d e f</code> becomes <code>c a e d f b</code></p>
+
+<p>Also, it ought to be noted that this multiplication is not commutative. That is,</p>
+
+<p><img src="http://latex.codecogs.com/gif.latex?\binom{a&space;b&space;c&space;d&space;e&space;f}{c&space;d&space;f&space;b&space;e&space;a}&space;X&space;\binom{a&space;b&space;c&space;d&space;e&space;f}{c&space;a&space;e&space;d&space;f&space;b}" alt="image" />
+ is not equal to 
+ <img src="http://latex.codecogs.com/gif.latex?\binom{a&space;b&space;c&space;d&space;e&space;f}{c&space;a&space;e&space;d&space;f&space;b}&space;X&space;\binom{a&space;b&space;c&space;d&space;e&space;f}{c&space;d&space;f&space;b&space;e&space;a}" alt="image" /></p>
+
+<p>In this case, the order matters!</p>
+
+<h4>Cycle Notation</h4>
+
+<p>As I stated earlier, the notation we've been using up until now is called <strong>two-line notation</strong>, for obvious reasons. There another notation which is a little harder to read at first, but I actually prefer it: <strong>cycle notation</strong>.</p>
+
+<p>Going back to our first example:</p>
+
+<p><img src="http://latex.codecogs.com/gif.latex?\binom{a&space;b&space;c&space;d&space;e&space;f}{c&space;d&space;f&space;b&space;e&space;a}" alt="image" /></p>
+
+<p>This can be written in cycle notation as: <code>(acf)(bd)</code> This represents two "cycles", each enclosed in <code>()</code>. Each character in a cycle becomes the character to it's right, with the last character in the cycle becoming the first character, in a circular fashion.</p>
+
+<p>So again, a becomes c, c becomes f, f becomes a, b becomes d and d becomes b.</p>
+
+<p>Permutations in cycle notation can be written in a number of different ways. <code>(bd)(acf)</code>, <code>(cfa)(bd)</code> and <code>(db)(fac)</code> are all equivalent, however <code>(afc)(db)</code> wouldn't be because it says <code>a</code> becomes <code>f</code>.</p>
+
+<p>Now, if you compare the cycle notation representation of <code>(acf)(bd)</code> to the original set <code>(abcdef)</code> you should notice that one letter is missing: e. This is because in the permutation, e becomes e, or doesn't change. You can see that easily in the two line notation. This is called a singleton cycle, and can be included or left off in cycle notation.</p>
+
+<blockquote>
+  <p>Interesting side note: A permutation that's made up entirely of singleton cycles is called an <strong><em>identity permutation</em></strong>, and it's usually denoted as <code>()</code>.</p>
+</blockquote>
+
+<h4>Multiplication in Cycle form.</h4>
+
+<p>The above multiplcation problem that we did in two-line form can be easily translated into cycle notation as follows:<br />
+<img src="http://latex.codecogs.com/gif.latex?\binom{a&space;b&space;c&space;d&space;e&space;f}{c&space;d&space;f&space;b&space;e&space;a}&space;X&space;\binom{a&space;b&space;c&space;d&space;e&space;f}{c&space;a&space;e&space;d&space;f&space;b}" alt="image" /></p>
+
+<p>Becomes: 
+ <code>(acf)(bd)(abd)(ef) = (acefb)</code></p>
+
+<p>We don't need that pesky <code>x</code> sign here either, since it's pretty clear tht <code>(acf)(bd)</code> means <code>(acf)</code> times <code>(bd)</code>.</p>
+
+<p>This is easy enough to do by hand, and it doesn't take very long to do it. But, let's be honest:
+<img src="http://img.pandawhale.com/post-6769-aint-nobody-got-time-for-that-yIus.gif" alt="image" /></p>
+
+<p>So instead, we create an algorithm that can handle this work for us.</p>
+
+<h4>Building an Algorithm</h4>
+
+<p>Let's find the product of the following permutations:</p>
+
+<pre><code>(acfg)(bcd)(aed)(fade)(bgfae)
+</code></pre>
+
+<p>**Step 1: Clean the input: **Replace all right parenthesis with the character directly after the matching right parenthesis. Remove all left parenthesis. After this step, our original input looks like this: 
+<code>acfga bcdb aeda fadef bgfaeb</code></p>
+
+<p>Notice that all the parenthesis are gone, and we've copied the first letter of each permutation to the end: acfg becae acfga, etc.</p>
+
+<p>In code this is pretty simple:</p>
+
+<pre><code>private function parseInput($input)
+{
+    $this-&gt;raw = $input;
+
+    $input = explode(')(', $input);
+
+    $input_array = array_map(
+        function ($piece)
+        {
+            $piece = trim($piece, '()');
+            $piece = $piece . $piece[0];
+
+            return $piece;
+        },
+        $input
+    );
+
+    $character_array = preg_split('//', implode('', $input_array), -1, PREG_SPLIT_NO_EMPTY);
+
+    return $character_array;
+}
+</code></pre>
+
+<p><strong>Step 2 Getting started:</strong> Searching from left to right, find the first untagged element of input. Define a variable <code>$start</code> equal to this value, and tag it. Add a left parenthesis and the element to the output.</p>
+
+<pre><code>list($position, $current, $start, $tags) = openPermutation($character_array, $tags);
+$output[] = '(';
+$output[] = $start;
+</code></pre>
+
+<p>You can see here that I'm choosing to construct my output as an array. I start by finding the first untagged element, adding that to the <code>$tags</code> array, and then adding <code>(</code> and <code>$start</code> to the <code>$output</code> array.</p>
+
+<p>On the first time at this step, output should be <code>['(', 'a']</code></p>
+
+<p><strong>Step 3</strong>: Set the current equal to the next untagged element in the input. 
+ This step was actually also performed above by <code>$current = $character_array[$position]</code></p>
+
+<p><strong>Step 4: Find the next right instance</strong> Continuing left to right, scan the input until you either read the end, or you find an element equal to the current. In the latter case, tag that element and return to step 3.</p>
+
+<pre><code>list($position, $current) = findNextRightInstance($character_array, $current, $position);
+</code></pre>
+
+<p><strong>Step 5: Does Current == Start?</strong> If <code>$current</code> DOESN'T == start, add <code>$current</code> to the output array and go back to step 4, starting at the left of the of the input.</p>
+
+<pre><code>$output[] = $current;
+$tags[$current] = $current;
+$position = array_search($current, $character_array);
+
+$position++;
+$current = $character_array[$position];
+</code></pre>
+
+<p><strong>Step 6: Close it and start over</strong> In the case that <code>$current</code> DOES == <code>$start</code>,  add a right parenthesis to the output and go back to Step 2.</p>
+
+<pre><code>if ($current == $start)
+{
+    $output[] = ")";
+}
+</code></pre>
+
+<p>You keep going through that round about until all of the elements in the input appear in the tagged array. At that point, you're finished.</p>
+
+<p>Given our initial input of <code>(acfg)(bcd)(aed)(fade)(bgfae)</code> you end up with <code>(adg)(ceb)(f)</code></p>
+
+<p>Because I'm a curious soul, I wanted to see how this work with different kinds of permutations. Knowing what we do about multiplication, we know that <code>$a x $b x $c</code> is equal to <code>($a x $b) x $c</code>. Does the same hold true of Permutations?</p>
+
+<p>I implemented my algorithm so that the <code>multiply()</code> would work with a single string representation of the permutation, as seen above, or separate permutations.</p>
+
+<p>The first method, with a single string Permutation:</p>
+
+<pre><code>$p6 = new Permutation('(acfg)(bcd)(aed)(fade)(bgfae)');
+echo multiply($p6)-&gt;raw();
+</code></pre>
+
+<p>This indeed outputs what we expected:</p>
+
+<pre><code>(adg)(ceb)(f)
+</code></pre>
+
+<p>However, when I did it with each permutation separately:</p>
+
+<pre><code>$p1 = new Permutation("(acfg)");
+$p2 = new Permutation("(bcd)");
+$p3 = new Permutation("(aed)");
+$p4 = new Permutation("(fade)");
+$p5 = new Permutation("(bgfae)");
+echo multiply(multiply(multiply(multiply($p1, $p2), $p3), $p4), $p5)-&gt;raw();
+</code></pre>
+
+<p>This time it gave a slightly different output:</p>
+
+<pre><code>(adg)(bce)(f)
+</code></pre>
+
+<p>Looking out those two outputs, the only difference is the second cycle <code>ceb</code> vs <code>bce</code>. As we discussed earlier, these are actually equivalent. In both cases, c becomes c, b becomes c, and e becomes b.</p>
+
+<p>Tada! We've now written an algorithm to calculate the product of permutations in cycle notation. Go forth, conquer the world. As always, if you want to discuss this or you have questions, feel free to find me on the twitter: <a href="http://twitter.com/kayladnls">@kayladnls</a></p>
+
+<p>If you'd like to see the full code that I used to implement this, <a href="https://gist.github.com/kayladnls/0857b47a11b915f5d354">go here.</a></p>
+
+<blockquote>
+  <p>References<br />
+   1. <a href="http://mathworld.wolfram.com/Permutation.html">Permutation, Wolfram Mathworld,</a> http://mathworld.wolfram.com/Permutation.html<br />
+   2. The majority of this information, including the algorithm and a deeper explanation of permutations was learned from <a href="http://www.amazon.com/The-Art-Computer-Programming-Vol/dp/0201896834">The Art Of Computer Programming, Vol 1 by Donald E Knuth</a>. Find it, buy it, read it, love it, and then come find me so we can talk about it.</p>
+</blockquote>
+]]></content>
+        </entry>
             <entry>
             <title type="html"><![CDATA[Method of Least Squares: Using squares to calculate a hat.]]></title>
             <link href="http://kayladnls.com/2014/12/19/least-squares"/>
