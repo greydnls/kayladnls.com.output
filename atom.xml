@@ -3,7 +3,7 @@
     <title><![CDATA[KaylaDnls.com]]></title>
     <link href="http://kayladnls.com/atom.xml" rel="self"/>
     <link href="http://kayladnls.com/"/>
-    <updated>2015-01-03T06:17:37+00:00</updated>
+    <updated>2015-01-03T19:02:58+00:00</updated>
     <id>http://kayladnls.com/</id>
         <generator uri="http://sculpin.io/">Sculpin</generator>
             <entry>
@@ -60,7 +60,7 @@ Step 3: Step 2 becomes <code>c a e d f b</code></p>
 
 <h4>Cycle Notation</h4>
 
-<p>As I stated earlier, the notation we've been using up until now is called <strong>two-line notation</strong>, for obvious reasons. There another notation which is a little harder to read at first, but I actually prefer it: <strong>cycle notation</strong>.</p>
+<p>As I stated earlier, the notation we've been using up until now is called <strong>two-line notation</strong>, for obvious reasons. There is another notation which is a little harder to read at first, but I actually prefer it: <strong>cycle notation</strong>.</p>
 
 <p>Going back to our first example:</p>
 
@@ -68,9 +68,14 @@ Step 3: Step 2 becomes <code>c a e d f b</code></p>
 
 <p>This can be written in cycle notation as: <code>(acf)(bd)</code> This represents two "cycles", each enclosed in <code>()</code>. Each character in a cycle becomes the character to it's right, with the last character in the cycle becoming the first character, in a circular fashion.</p>
 
-<p>So again, a becomes c, c becomes f, f becomes a, b becomes d and d becomes b.</p>
+<p>It looks something like this:<br />
+ <img src="/img/cycleNotation.jpg" alt="image" /></p>
+
+<p>So again, just as with the two-line notation: a becomes c, c becomes f, f becomes a.</p>
 
 <p>Permutations in cycle notation can be written in a number of different ways. <code>(bd)(acf)</code>, <code>(cfa)(bd)</code> and <code>(db)(fac)</code> are all equivalent, however <code>(afc)(db)</code> wouldn't be because it says <code>a</code> becomes <code>f</code>.</p>
+
+<p>Looking at that, you might think I'm mistaken. I mean, I JUST said that order in multiplication of permutations matters, didn't I? Generally, in cycle notation, that's still true. However, the two cycles above (<code>(bd)</code> and <code>(acf)</code>) don't intersect. That is, neither of them have any letters in common. So, in this case, order doesn't matter.</p>
 
 <p>Now, if you compare the cycle notation representation of <code>(acf)(bd)</code> to the original set <code>(abcdef)</code> you should notice that one letter is missing: e. This is because in the permutation, e becomes e, or doesn't change. You can see that easily in the two line notation. This is called a singleton cycle, and can be included or left off in cycle notation.</p>
 
@@ -86,7 +91,38 @@ Step 3: Step 2 becomes <code>c a e d f b</code></p>
 <p>Becomes: 
  <code>(acf)(bd)(abd)(ef) = (acefb)</code></p>
 
-<p>We don't need that pesky <code>x</code> sign here either, since it's pretty clear tht <code>(acf)(bd)</code> means <code>(acf)</code> times <code>(bd)</code>.</p>
+<p>We don't need that pesky <code>x</code> sign here either, since it's pretty clear that <code>(acf)(bd)</code> means <code>(acf)</code> times <code>(bd)</code>.</p>
+
+<p>Let's walk through this together. We know from our earlier definition that the multiplication of permutations is just applying one after the other.</p>
+
+<ol>
+<li><p>Starting at the left, Select the first (untagged) character of the input, in this case: <code>a</code>. We'll call this our "current" item. We're trying to find out what happens to that letter as each of the permutations is applied to it.</p></li>
+<li><p>Move to the right 1. We have <code>a</code> becomes <code>c</code></p>
+
+<blockquote>
+  <p>The final position of <code>a</code> isn't necessarily <code>c</code>, though. We need to continue moving to the right along the input to see what <code>c</code> becomes, because that will be the final stop for <code>a</code>.  In this case, <code>c</code> doesn't appear again. After step 2, our output is <code>(ac</code>.</p>
+</blockquote></li>
+<li><p>Remember that we read this partial output as "a becomes c", The next logical question is what happens to c? <code>c</code> becomes our 'current' character, and we move back to step 2.</p>
+
+<blockquote>
+  <p>Our alorithm will terminate once each character in the input has been seen, so we 'tag' each character as they become the "current" character. Once the number of unique characters in the input == the number of tags,  we have determined the final positions of each of the input characters, and so we're done.</p>
+</blockquote>
+
+<ol>
+<li>Eventually, you will come to a point where the last letter of the output "becomes" the first letter of the current cycle. This is a "closed cycle", you output a right parenthesis to indicate that the cycle is closed. If there is more input to be processed, you start a new cycle. </li>
+</ol></li>
+</ol>
+
+<p>These 4 steps above are repeated until all of the input characters have been tagged, and we have found our answer.</p>
+
+<p>We can walk through the above example:  <code>(acf)(bd)(abd)(ef)</code><br />
+a -> c<br />
+c -> f -> e<br />
+e -> f<br />
+f  -> a -> b<br />
+b -> d -> a<br />
+d -> b -> d
+and so, our final answer is: <code>(a c e f b)</code>, in this case, <code>d</code> is a singleton cycle and can be left off or included as you please.</p>
 
 <p>This is easy enough to do by hand, and it doesn't take very long to do it. But, let's be honest:
 <img src="http://img.pandawhale.com/post-6769-aint-nobody-got-time-for-that-yIus.gif" alt="image" /></p>
@@ -100,108 +136,131 @@ Step 3: Step 2 becomes <code>c a e d f b</code></p>
 <pre><code>(acfg)(bcd)(aed)(fade)(bgfae)
 </code></pre>
 
-<p>**Step 1: Clean the input: **Replace all right parenthesis with the character directly after the matching right parenthesis. Remove all left parenthesis. After this step, our original input looks like this: 
-<code>acfga bcdb aeda fadef bgfaeb</code></p>
+<p>**Step 1: Clean the input: ** Remember that once you reach the end of a cycle, the last letter points back in a circular fasion to the first letter of the cycle? That's a bit irritating to explain to a computer. Instead, we'll replace all right parentheses with the first character of that cycle. Remove all left parentheses. After this step, our original input looks like this:</p>
 
-<p>Notice that all the parenthesis are gone, and we've copied the first letter of each permutation to the end: acfg becae acfga, etc.</p>
+<pre><code>acfga bcdb aeda fadef bgfaeb
+ ````
 
-<p>In code this is pretty simple:</p>
+ Notice that all the parentheses are gone, and we've copied the first letter of each cycle to the end: `acfg` became `acfga`, etc. 
 
-<pre><code>private function parseInput($input)
-{
-    $this-&gt;raw = $input;
+ In code this is pretty simple: 
 
-    $input = explode(')(', $input);
-
-    $input_array = array_map(
-        function ($piece)
-        {
-            $piece = trim($piece, '()');
-            $piece = $piece . $piece[0];
-
-            return $piece;
-        },
-        $input
-    );
-
-    $character_array = preg_split('//', implode('', $input_array), -1, PREG_SPLIT_NO_EMPTY);
-
-    return $character_array;
-}
 </code></pre>
 
-<p><strong>Step 2 Getting started:</strong> Searching from left to right, find the first untagged element of input. Define a variable <code>$start</code> equal to this value, and tag it. Add a left parenthesis and the element to the output.</p>
+<p>function parseInput($input)
+{
+    $input = explode(')(', $input);</p>
 
-<pre><code>list($position, $current, $start, $tags) = openPermutation($character_array, $tags);
+<pre><code>$input_array = array_map(
+    function ($piece)
+    {
+        $piece = trim($piece, '()');
+        $piece = $piece . $piece[0];
+
+        return $piece;
+    },
+    $input
+);
+
+$character_array = preg_split('//', implode('', $input_array), -1, PREG_SPLIT_NO_EMPTY);
+
+return $character_array;
+</code></pre>
+
+<p>}</p>
+
+<pre><code> **Step 2 Open the cycle:** Searching from left to right, find the first untagged element of input. Define a variable `$start` equal to this value, and tag it. Add a left parentheses and the element to the output. 
+
+</code></pre>
+
+<p>function openPermutation($character_array, $tags)
+{
+    list($initial_position, $start) = getNextUntaggedElement($character_array, $tags);
+    $tags[] = $start;</p>
+
+<pre><code>$position = $initial_position + 1;
+$current = $character_array[$position];
+
 $output[] = '(';
 $output[] = $start;
 </code></pre>
 
-<p>You can see here that I'm choosing to construct my output as an array. I start by finding the first untagged element, adding that to the <code>$tags</code> array, and then adding <code>(</code> and <code>$start</code> to the <code>$output</code> array.</p>
+<p>}</p>
 
-<p>On the first time at this step, output should be <code>['(', 'a']</code></p>
+<pre><code><br /> You can see from these first two steps that I've chosen to construct both the output and input as arrays. Why? Because I like arrays. I'd be very happy to hear other implementations using different data structures. (Yup, there are more ways to skin this cat, as with every cat)
 
-<p><strong>Step 3</strong>: Set the current equal to the next untagged element in the input. 
- This step was actually also performed above by <code>$current = $character_array[$position]</code></p>
+ At this point, output should be `['(', 'a'] `
 
-<p><strong>Step 4: Find the next right instance</strong> Continuing left to right, scan the input until you either read the end, or you find an element equal to the current. In the latter case, tag that element and return to step 3.</p>
+ **Step 3**: Set the current equal to the next untagged element in the input. 
+ This step was actually also performed above by `$current = $character_array[$position]`
 
-<pre><code>list($position, $current) = findNextRightInstance($character_array, $current, $position);
+ **Step 4: Find the next right instance** Continuing left to right, scan the input until you either reach the end, or you find an element equal to the current. In the latter case, tag that element and return to step 3. 
+
 </code></pre>
 
-<p><strong>Step 5: Does Current == Start?</strong> If <code>$current</code> DOESN'T == start, add <code>$current</code> to the output array and go back to step 4, starting at the left of the of the input.</p>
+<p>list($position, $current) = findNextRightInstance($character_array, $current, $position);</p>
 
-<pre><code>$output[] = $current;
+<pre><code>**Step 5: Check Current Against start?** At this point `$current` holds the character that we are currently searching for. `$start` holds the first character of the current cycle.   
+
+**5a. **If `$current` DOESN'T == start, we aren't ready to close the cycle. So, add `$current` to the output array and go back to step 4. 
+</code></pre>
+
+<p>$output[] = $current;
 $tags[$current] = $current;
-$position = array_search($current, $character_array);
+$position = array_search($current, $character_array);</p>
 
-$position++;
-$current = $character_array[$position];
+<p>$position++;
+$current = $character_array[$position];</p>
+
+<pre><code><br />   ** 5b: ** If `$current` DOES == `$start`, then we have reached the end of this cycle. Add a right parenthesis to the output and go back to Step 2. 
+
 </code></pre>
 
-<p><strong>Step 6: Close it and start over</strong> In the case that <code>$current</code> DOES == <code>$start</code>,  add a right parenthesis to the output and go back to Step 2.</p>
-
-<pre><code>if ($current == $start)
+<p>if ($current == $start)
 {
     $output[] = ")";
-}
-</code></pre>
+}</p>
 
-<p>You keep going through that round about until all of the elements in the input appear in the tagged array. At that point, you're finished.</p>
+<pre><code><br />You keep going through that round about until all of the elements in the input appear in the tagged array. At that point, you're finished. 
 
-<p>Given our initial input of <code>(acfg)(bcd)(aed)(fade)(bgfae)</code> you end up with <code>(adg)(ceb)(f)</code></p>
+Given our initial input of `(acfg)(bcd)(aed)(fade)(bgfae)` you end up with `(adg)(ceb)(f)`
 
-<p>Because I'm a curious soul, I wanted to see how this work with different kinds of permutations. Knowing what we do about multiplication, we know that <code>$a x $b x $c</code> is equal to <code>($a x $b) x $c</code>. Does the same hold true of Permutations?</p>
+Because I'm a curious soul, I wanted to see how this work with different kinds of permutations. Knowing what we do about multiplication, we know that `$a x $b x $c` is equal to `($a x $b) x $c`. Does the same hold true of Permutations? 
 
-<p>I implemented my algorithm so that the <code>multiply()</code> would work with a single string representation of the permutation, as seen above, or separate permutations.</p>
+I implemented my algorithm so that the `multiply()` function would work with a single string representation of the permutation, as seen above, or two separate permutations to be multiplied together. 
 
-<p>The first method, with a single string Permutation:</p>
+The first method, with a single string Permutation:
 
-<pre><code>$p6 = new Permutation('(acfg)(bcd)(aed)(fade)(bgfae)');
+````
+$p6 = new Permutation('(acfg)(bcd)(aed)(fade)(bgfae)');
 echo multiply($p6)-&gt;raw();
+````
+
+This indeed outputs what we expected:    
+
 </code></pre>
 
-<p>This indeed outputs what we expected:</p>
+<p>(adg)(ceb)(f)</p>
 
-<pre><code>(adg)(ceb)(f)
+<pre><code>However, when I did it with each permutation separately: 
+
 </code></pre>
 
-<p>However, when I did it with each permutation separately:</p>
-
-<pre><code>$p1 = new Permutation("(acfg)");
+<p>$p1 = new Permutation("(acfg)");
 $p2 = new Permutation("(bcd)");
 $p3 = new Permutation("(aed)");
 $p4 = new Permutation("(fade)");
 $p5 = new Permutation("(bgfae)");
-echo multiply(multiply(multiply(multiply($p1, $p2), $p3), $p4), $p5)-&gt;raw();
+echo multiply(multiply(multiply(multiply($p1, $p2), $p3), $p4), $p5)->raw();</p>
+
+<pre><code>This time it gave a slightly different output: 
+
 </code></pre>
 
-<p>This time it gave a slightly different output:</p>
+<p>(adg)(bce)(f)
+```</p>
 
-<pre><code>(adg)(bce)(f)
-</code></pre>
-
-<p>Looking out those two outputs, the only difference is the second cycle <code>ceb</code> vs <code>bce</code>. As we discussed earlier, these are actually equivalent. In both cases, c becomes c, b becomes c, and e becomes b.</p>
+<p>Looking out those two outputs, the only difference is the second cycle <code>ceb</code> vs <code>bce</code>. As we discussed earlier, these are actually equivalent. In both cases, c becomes e, b becomes c, and e becomes b.</p>
 
 <p>Tada! We've now written an algorithm to calculate the product of permutations in cycle notation. Go forth, conquer the world. As always, if you want to discuss this or you have questions, feel free to find me on the twitter: <a href="http://twitter.com/kayladnls">@kayladnls</a></p>
 
