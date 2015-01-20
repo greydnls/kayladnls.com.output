@@ -98,6 +98,179 @@
             <div class="col-sm-2">
                 <ul class="post-info">
                     <li>
+                        Dec 10, 2014
+                    </li>
+                                        <li class="hidden-xs">
+                        Categories:
+                                                <a class="label labe-default label-pink" href="http://kayladnls.com/blog/categories/Code">Code</a>
+                                                <a class="label labe-default label-pink" href="http://kayladnls.com/blog/categories/Nerd">Nerd</a>
+                                            </li>
+                                    </ul>
+            </div>
+            <div class="col-sm-10">
+                <a class="post-title" href="http://kayladnls.com/2014/12/10/turing-complete-christma-tree">Undecidable Turing-Complete Christmas Tree Automata in Practice</a>
+
+                <div class="post-content">
+                    <div class="text-editor">
+                        <h4>"Have you ever heard of Rule 30?"</h4>
+
+<p>A friend chirped me in skype asking if I was familiar with "Rule 30". He's going in for a job interview and they'd asked him to code this Rule 30 as an exercise. I hadn't heard of it, but I was intruiged, and I'm always one to try to help a friend. Off to the Google-Mobile, Batman!</p>
+
+<p>As I would learn, <code>Rule 30</code> refers to something introduced by  <a href="http://en.wikipedia.org/wiki/Stephen_Wolfram">Stephen Wolfram</a> in 1983]<sup> (1)</sup>.  Even if you're not familiar with Wolfram, you're probably familiar with his work. Especially, if you took any <a href="http://www.wolframalpha.com/">college level Calculus classes</a>. He was a computer scientist, and word is he was pretty good at the maths. If you don't know him, check him out, cool dude.</p>
+
+<p>Anyway, on to this Rule 30 business. Rule 30 is one of many rules that pertains to binary cellular automaton<sup> (2)</sup>. Now, when I read that the first time, they lost me halfway through binary. If you're like me, never fear!</p>
+
+<h4>Elementary Celluar Automaton</h4>
+
+<p>So, how's this work? For each cell there are two possible values: 1 or 0. Each of Wolfram's "Rules" (there are 255 of them) defines a list of rules that tell you how to determine whether a given cell is 1 or 0. It does this by analyzing the "neghborhood" of the cell in question. What is meant by neighborhood is discussed in more detail below.</p>
+
+<h4>What it means to be 1D</h4>
+
+<p>You may be famliar with other Cellular Automata, such as Conway's game of life Game of Life<sup>(3)</sup>. This method is similar, but there is a primary difference. Game of Life is 2-dimensional, with a third dimension of time. That means that as the rules are applied and the pattern progresses, the "board" is refreshed.</p>
+
+<p>Rule 30 and it's siblings are 1-Dimensional. In this case, the y axis is, in fact, time. That means that as the program is run the new output is appended to the old, rather than the entire "board" refreshing.</p>
+
+<h4>Why "Rule 30"?</h4>
+
+<p>Since there are<code>2×2×2 = 8</code> possible binary states for the three cells neighboring a given cell, there are a total of <code>2^8=256</code> elementary cellular automata, each of which can be indexed with an 8-bit binary number.</p>
+
+<p>So, Binary: 00011110 = decimal 30. Therefore, Rule 30. This holds true for all of the other rules, too, by the way. Not terribly important, but I found it interesting, so there you have it. Moving on.</p>
+
+<h4>Ruleception</h4>
+
+<p>Yes! Rules inside rules!</p>
+
+<p><img src="/img/rule30.gif" alt="image" /></p>
+
+<p>Above are the rules given for Rule 30. This is how you determine whether your "cell" is a 1 or a 0. Upon first inspection, this made absolutely 0 sense to me. (binary pun possibly intended?).</p>
+
+<p>What you need to understand here is what is meant by "neighborhood". When you're determining the 1/0ness of a cell, you look at it's neighborhood and compare that against the rules. Neighborhood being the three cells above it. So, 111 = 0, 110 = 0, so forth and so on. Once you get your mind around that, you're off to the races.</p>
+
+<p>Once you have your rules, you apply them to the given input (in this case a single "line" of the grid with at least one cell set to "1"). What do you get?</p>
+
+<p><img src="/img/rule30graph.png" alt="image" /></p>
+
+<p>So Pretty.</p>
+
+<p>But how do you DO it? Well, let me show you.</p>
+
+<h4>The Codez.</h4>
+
+<p>*** Warning!** I have absolutely no intention of using OO practices here. No classes will be made, no injection will be used. I will interface nothing. If this makes you uncomfortable, you may want to stop reading.*</p>
+
+<p>End result, I want to create this cool looking graph thing. That's how a picture it, a graph, or grid, Once you're there, it becomes a matter of some setup, and then some iteration. It looks like this:</p>
+
+<pre><code>//First thing's first, let's codify those rules. 
+$rules = array(
+    '111'=&gt; 0,
+    '110' =&gt; 0,
+    '101'=&gt; 0,
+    '100' =&gt; 1,
+    '011'=&gt; 1,
+    '010' =&gt; 1,
+    '001'=&gt; 1,
+    '000' =&gt; 0
+);
+
+//create an empty array to hold your grid
+$lines = array();
+
+//set up that first line 
+$first_line = array_fill(0, 51, 0);
+
+// make sure you set at least one of those cells to 1,
+// or this will going no where fase. 
+$first_line[24] = 1;
+
+//now add your line to the grid. 
+$lines[] = $first_line;
+
+//Lets compile that grid
+
+// I'm doing 10 iterations, you can do as many as you like. 
+for ($i = 0; $i&lt; 10; $i++)
+{
+    // make a new line
+    $line = array();
+
+    for($j = 0; $j&lt; 51; $j++)
+    {
+        // The "pattern" is determined by the "neighborhood" or the 3 cells in the 
+        // generation (row) above our cell in question. 
+        $pattern = (string)implode('', array_slice(end($lines), $j - 1, 3));
+
+         // if we have a valid value, great. Elsewise, give is a 0. 
+         $line[] = (strlen($pattern) == 3 &amp;&amp; isset($rules[$pattern])) ? $rules[$pattern] : 0;
+    }
+
+    Add the new line into the grid
+    $lines[] = $line;
+}
+
+// Now, let's output it
+foreach ($lines as $line)
+{
+    foreach ($line as $piece)
+    {
+        echo $piece;
+    }
+    echo "\n";
+}
+</code></pre>
+
+<p><img src="/img/rule30output.png" alt="image" /></p>
+
+<p>Tada!</p>
+
+<h4>Merry Christmas!</h4>
+
+<p>For mine, I changed 1 to <code>'/'</code> and 0 to <code>'*'</code>. Why? Because it's December, and it looks festive, that's why. I just taught you how to output a Christmas tree in your terminal!</p>
+
+<p>Clearly, with the added nerdery, this is no longer a Christmas Tree. This is what we call a FSM Tree. The perfect DIY gift for your budget conscious nerd.</p>
+
+<p><img src="http://media.giphy.com/media/14cUTtBgAXn7J6/giphy.gif" alt="image" /></p>
+
+<p>And there you have it. Merry Christmas, Nerds.</p>
+
+<h4>Post Script</h4>
+
+<p>You may be wondering why the post title references Turing completeness<sup>(4)</sup>. As I mentioned before, our beloved Rule 30 has 254 siblings. One of these siblings is known as Rule 110, and this rule is turing complete.</p>
+
+<p>The process for running through Rule 110 is the same as Rule 30 (that holds true for all 255 rules, by the by), the only change is the rules. So, if you're interested, here are the rules for Rule 110 (in Christmas tree format, of course)</p>
+
+<pre><code>$rules = array(
+    '///'=&gt; '*',
+    '//*' =&gt; '/',
+    '/*/'=&gt; '/',
+    '/**' =&gt;'*',
+    '*//'=&gt; '/',
+    '*/*' =&gt; '/',
+    '**/'=&gt; '/',
+    '***' =&gt; '*'
+);
+</code></pre>
+
+<p>Go forth and make a Turing machine.</p>
+
+<p>References</p>
+
+<ol>
+<li>Wolfram, S., "Statistical mechanics of cellular automata", <a href="http://journals.aps.org/rmp/abstract/10.1103/RevModPhys.55.601">http://journals.aps.org/rmp/abstract/10.1103/RevModPhys.55.601</a> </li>
+<li>Elementary Cellular Automaton, <a href="http://mathworld.wolfram.com/ElementaryCellularAutomaton.htm">http://mathworld.wolfram.com/ElementaryCellularAutomaton.htm</a></li>
+<li>Conway's game of life, <a href="http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life</a></li>
+<li>Turing Complete, <a href="http://c2.com/cgi/wiki?TuringComplete">http://c2.com/cgi/wiki?TuringComplete</a></li>
+</ol>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+    <article class="post">
+        <div class="row">
+            <div class="col-sm-2">
+                <ul class="post-info">
+                    <li>
                         Aug 11, 2014
                     </li>
                                         <li class="hidden-xs">
@@ -208,68 +381,6 @@
 <p>So, from me to you, Pep-Talk Voice: Fuck you. Fuck the excuses I make to myself to explain away why I’m gaining weight. I don’t need excuses. I don’t need permission to gain weight, not even from myself. I DO need to be happy. I DO need to own my choices and either be okay with them, or change them.</p>
 
 <p>I DID need to write this, so thanks for reading.</p>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </article>
-    <article class="post">
-        <div class="row">
-            <div class="col-sm-2">
-                <ul class="post-info">
-                    <li>
-                        May 24, 2014
-                    </li>
-                                        <li class="hidden-xs">
-                        Categories:
-                                                <a class="label labe-default label-pink" href="http://kayladnls.com/blog/categories/Code%20Manifesto">Code Manifesto</a>
-                                                <a class="label labe-default label-pink" href="http://kayladnls.com/blog/categories/Diversity">Diversity</a>
-                                                <a class="label labe-default label-pink" href="http://kayladnls.com/blog/categories/Equality">Equality</a>
-                                                <a class="label labe-default label-pink" href="http://kayladnls.com/blog/categories/Community">Community</a>
-                                            </li>
-                                    </ul>
-            </div>
-            <div class="col-sm-10">
-                <a class="post-title" href="http://kayladnls.com/2014/05/24/code-manifesto">The Code Manfiesto</a>
-
-                <div class="post-content">
-                    <div class="text-editor">
-                        <p>A few weeks ago I wrote a blog post venting my frustrations with the current state of the tech industry, specifically related to how women are treated in the field. It wasn’t terribly rational. I was complaining, and I had no solutions to offer on the matter.</p>
-
-<p>I’ve had a lot of good conversations about the issue since. I’ve spoken with people who agree, who kind of agree, and a few who completely disagree. It’s forced me to sit down and analyze my thoughts. To really solidify what I saw as the problem, and possible ways of approaching it. In short, I’ve learned a lot.</p>
-
-<p>First: I would like to address the things I said about women’s outreach programs. I originally found such groups/classes/etc patronizing and exclusionary. Turns out, they are neither. From what I’ve learned, these groups aren’t “PHP for women and women only” more like “PHP for people who aren’t misogynistic jerks”. There might be a bit of a messaging disconnect there. They’re aiming to create a safe, welcoming place for women to exist in our industry. I think that’s great.</p>
-
-<blockquote>
-  <h3>This isn’t a women’s issue. It’s an everyone issue.</h3>
-</blockquote>
-
-<p>Second: This isn’t a women’s issue. It’s a minorities issue. Really, it’s an everyone issue. I had the pleasure of speaking with an Italian developer who’s felt and seen treatment similar to what I’ve experienced, simply because English isn’t his native language.</p>
-
-<p>Here’s where I ended up: The industry I work in now is not the industry that I want to work in. I love what I do for a living. I love a great many of the people I’ve met while doing that thing that I love to do. I don’t love being treated like an outsider. I don’t love feeling like I don’t, or can’t have a voice. I don’t love seeing other people treated like that.</p>
-
-<p>I want to work in an industry that is welcoming and empowering. I want people outside our industry to look in and see a place where people, all people, regardless of their demographics, are able to do great things. A place that is supportive and helpful. The more people we have doing what we do, the more brains we have in the room, solving the problems that we’re solving, the better off we’re all going to be.</p>
-
-<p>For all we know, there’s a girl who’s written the code to solve the same problem you’ve been beating your head against your keyboard over for months. Except, it’s sitting on her hard drive somewhere, because she’s too scared of being judged, or she doesn’t feel confident enough to share it. Empower that girl. In short, empower all the people.</p>
-
-<p>There’s no overnight fix for this. There is no switch we can flip and correct it, no algorithm that can be written to magically make everyone get along. We do have the power to fix it, though. Each of us, incrementally, iteratively. People have power. A giant organism can be changed, simply by transforming each of the tiny molecules that make up that organism. Similarly, our community as a whole can be changed, if each of us vows to change it. It will take time, but it’s something well worth undertaking.</p>
-
-<p>To this end, I came up with the Code Manifesto. It is simply a list of values. If each of us committed ourselves to upholding these values, the space in which we work would be a better place to be. The list is in no way comprehensive. It is very much a work in progress, and I’d love to see input from the community. It’s on github, and pull requests are welcome. Add to it, modify it, make it something that each of us can stand for and be proud to represent.</p>
-
-<p>I had the amazing opportunity to give a lightening talk at Laracon in NYC last week. I chose to talk about the Manifesto, what it is, and what brought it on.</p>
-
-<p>This was my first conference, and my first time talking in front of that many people. It was, hands down, one of the scariest things I’ve ever done, and also one of the most gratifying. I stood on a brightly lit stage, in front of roughly 280 of my peers and explained how and why I felt things are broken. And also what I think we can do to fix them.</p>
-
-<p>I spoke for about fifteen minutes. My voice broke a few times. My palms were sweating, and I was really worried that the things I was saying were silly. But I stood up there, and I said what I came to say.</p>
-
-<p>And then they clapped, and all the fear melted away. Stepping off that stage I felt high. Maybe higher than I’ve ever felt. Sliding back into my chair afterwards and seeing the response on twitter brought a tear to my eye. A few of them, to be honest.</p>
-
-<p>For the next day and a half people came up to me as I walked around the conference to thank me, to tell me that they agree. They wanted to talk about the issues we’re all facing, and discuss what we can do to fix them. Men and women alike were talking about it. They were on board. It was, and still is, surreal. But it gives me hope. Hope that people not only see the problem, but that they want to fix it.</p>
-
-<blockquote>
-  <h3>It gives me hope that this can be fixed.</h3>
-</blockquote>
 
                     </div>
                 </div>
